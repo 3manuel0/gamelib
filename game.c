@@ -26,7 +26,7 @@ void GameFrame(){
     }
     rect.y  = y;
     // DrawRectangleRec(rect, BLACK);
-    DrawFPS(screenWidth - 40 , 0);
+    DrawFPS(screenWidth - 90 , 0);
     DrawRectangle(rect.x, rect.y, rect.width, rect.height, DARKBLUE);
     EndDrawing();
 }
