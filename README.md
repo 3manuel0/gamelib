@@ -1,1 +1,1 @@
-### A javascript api for linking raylib compiled to webassembly using clang
+### A javascript script for linking raylib functions in wasm to display in the html canvas
