@@ -1,7 +1,10 @@
 #include"raylib.h"
 
+#define screenWidth 1280
+#define screenHeight 720
+
 void GameInit(){
-    InitWindow(1280, 720, "testing raylib in web");
+    InitWindow(screenWidth, screenHeight, "testing raylib in web");
     SetTargetFPS(60);
 }
 
@@ -23,6 +26,7 @@ void GameFrame(){
     }
     rect.y  = y;
     // DrawRectangleRec(rect, BLACK);
+    DrawFPS(screenWidth - 40 , 0);
     DrawRectangle(rect.x, rect.y, rect.width, rect.height, DARKBLUE);
     EndDrawing();
 }
