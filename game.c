@@ -3,13 +3,18 @@
 #define screenWidth 1280
 #define screenHeight 720
 
+static Rectangle rect = {50, 50, 200, 200};
+static Vector2 velocity = {200, 200};
+
+
+// perfect velocity
+// static Vector2 velocity = {800, 800};
+
 void GameInit(){
     InitWindow(screenWidth, screenHeight, "testing raylib in web");
     SetTargetFPS(60);
 }
 
-static Rectangle rect = {50, 50, 200, 200};
-static Vector2 velocity = {200, 200};
 
 void GameFrame(){
     BeginDrawing();
@@ -30,7 +35,7 @@ void GameFrame(){
     DrawRectangle(rect.x, rect.y, rect.width, rect.height, DARKBLUE);
     EndDrawing();
 }
-void print(char * a);
+
 
 
 
