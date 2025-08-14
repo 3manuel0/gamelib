@@ -1,5 +1,18 @@
 // made a library to not always write/copy the same functions I always use in was
 window.wasmlib = {
+  // thanks to Tsoding(Alexey Kutepov) for this proxy
+  make_environment: (env) => {
+    return new Proxy(env, {
+      get(target, prop, receiver) {
+        if (env[prop] !== undefined) {
+          return env[prop].bind(env);
+        }
+        return (...args) => {
+          throw new Error(`NOT IMPLEMENTED: ${prop} ${args}`);
+        };
+      },
+    });
+  },
   // getting Cstring length in memory
   str_len: (mem, str_ptr) => {
     let len = 0;

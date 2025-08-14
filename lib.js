@@ -1,17 +1,3 @@
-// thanks to Tsoding(Alexey Kutepov) for this proxy
-function make_environment(env) {
-  return new Proxy(env, {
-    get(target, prop, receiver) {
-      if (env[prop] !== undefined) {
-        return env[prop].bind(env);
-      }
-      return (...args) => {
-        throw new Error(`NOT IMPLEMENTED: ${prop} ${args}`);
-      };
-    },
-  });
-}
-
 // mapping keys to work with the raylib KeyboardKey enum
 const RAYLIB_KEY_MAPPINGS = {
   Space: 32,
