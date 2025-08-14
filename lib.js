@@ -142,7 +142,7 @@ let str_len = wasmlib.str_len;
 // Instintiating webassembly
 WebAssembly.instantiateStreaming(fetch("game.wasm"), {
   // Raylib functions in js for wasm
-  env: make_environment({
+  env: wasmlib.make_environment({
     InitWindow: (width, height, str_ptr) => {
       canvas.width = width;
       canvas.height = height;
