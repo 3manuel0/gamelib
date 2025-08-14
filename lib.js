@@ -151,26 +151,8 @@ let audio;
 let targetFps;
 let currentMousePosition = { x: 0, y: 0 };
 const startingScreen = document.getElementById("strating-screen");
-
-// getting Cstring length in memory
-const str_len = (mem, str_ptr) => {
-  let len = 0;
-  while (mem[str_ptr] != 0) {
-    len++;
-    str_ptr++;
-  }
-  return len;
-};
-
-// getting a Cstring from wasm memory
-const get_str = (str_ptr) => {
-  const buffer = wasm.instance.exports.memory.buffer;
-  const mem = new Uint8Array(buffer);
-  const len = str_len(mem, str_ptr);
-  const str_bytes = new Uint8Array(buffer, str_ptr, len);
-  return new TextDecoder().decode(str_bytes);
-};
-
+let get_str = wasmlib.get_str;
+let str_len = wasmlib.str_len;
 // Instintiating webassembly
 WebAssembly.instantiateStreaming(fetch("game.wasm"), {
   // Raylib functions in js for wasm
@@ -299,40 +281,7 @@ WebAssembly.instantiateStreaming(fetch("game.wasm"), {
     PlayMusicStream: (ptr) => {
       audio.loop = true;
     },
-    printf: (str_ptr, args_ptrs) => {
-      const buffer = wasm.instance.exports.memory.buffer;
-      const str = get_str(str_ptr);
-      let args = [];
-      let argsIndex = 0;
-      for (let i = 0; i < str.length; i++) {
-        if (str[i] === "%") {
-          switch (str[i + 1]) {
-            case "f":
-              args.push(new Float64Array(buffer, args_ptrs + argsIndex, 1)[0]);
-              argsIndex += 8;
-              break;
-            case "d":
-              args.push(new Int32Array(buffer, args_ptrs + argsIndex, 1)[0]);
-              argsIndex += 4;
-              break;
-            case "u":
-              args.push(new Uint32Array(buffer, args_ptrs + argsIndex, 1)[0]);
-              argsIndex += 8;
-              break;
-            case "s":
-              args.push(get_str(args_ptrs + argsIndex));
-              argsIndex += str_len(args_ptrs + argsIndex);
-              break;
-            case "i":
-              args.push(new Int32Array(buffer, args_ptrs + argsIndex, 1)[0]);
-              argsIndex += 4;
-              break;
-          }
-        }
-      }
-      // const [arg1, arg2] = new Float64Array(buffer, args_ptrs[0], 2);
-      console.log(...args);
-    },
+    printf: wasmlib.printf,
     InitAudioDevice: () => {},
     DrawTextureEx: (texture_ptr, vec2_pos_ptr, rotation, scale, color_ptr) => {
       const buffer = wasm.instance.exports.memory.buffer;
