@@ -340,6 +340,8 @@ WebAssembly.instantiateStreaming(fetch("game.wasm"), {
     IsMouseButtonPressed: (key) => {
       return currentPressedMouseKeyState.has(key);
     },
+    loadSavedGame: (...args) => loadSave(...args),
+    saveGame: (...args) => SaveGamejs(...args),
   }),
 }).then((w) => {
   wasm = w;
