@@ -130,6 +130,7 @@ let dt;
 let images = [];
 let prevPressedKeyState = new Set();
 let currentPressedKeyState = new Set();
+let PressedKeyState = {};
 let currentPressedMouseKeyState = new Set();
 let camera_obj = { offset_x: 0, offset_y: 0 };
 let player = { x: 0, y: 0 };
@@ -137,8 +138,11 @@ let audio;
 let targetFps;
 let currentMousePosition = { x: 0, y: 0 };
 const startingScreen = document.getElementById("strating-screen");
+
 let get_str = wasmlib.get_str;
+
 let str_len = wasmlib.str_len;
+
 // Instintiating webassembly
 WebAssembly.instantiateStreaming(fetch("game.wasm"), {
   // Raylib functions in js for wasm
@@ -153,6 +157,7 @@ WebAssembly.instantiateStreaming(fetch("game.wasm"), {
       prevPressedKeyState.clear();
       currentPressedMouseKeyState.clear();
       prevPressedKeyState = new Set(currentPressedKeyState);
+      PressedKeyState = {};
     },
     GetScreenWidth: () => {
       return canvas.width;
@@ -262,7 +267,6 @@ WebAssembly.instantiateStreaming(fetch("game.wasm"), {
     },
     SetMasterVolume: (volume) => {
       audio.volume = volume;
-      console.log(volume);
     },
     PlayMusicStream: (ptr) => {
       audio.loop = true;
@@ -336,6 +340,9 @@ WebAssembly.instantiateStreaming(fetch("game.wasm"), {
     IsKeyDown: (key) => {
       // console.log(key);
       return currentPressedKeyState.has(key);
+    },
+    IsKeyPressed: (key) => {
+      return PressedKeyState[key];
     },
     IsMouseButtonPressed: (key) => {
       return currentPressedMouseKeyState.has(key);
