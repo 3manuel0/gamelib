@@ -361,13 +361,13 @@ WebAssembly.instantiateStreaming(fetch("game.wasm"), {
   const keyDown = (e) => {
     // e.preventDefault();
     currentPressedKeyState.add(RAYLIB_KEY_MAPPINGS[e.code]);
+    PressedKeyState[RAYLIB_KEY_MAPPINGS[e.code]] = true;
   };
   const keyUp = (e) => {
     currentPressedKeyState.delete(RAYLIB_KEY_MAPPINGS[e.code]);
   };
   const MouseDown = (e) => {
     currentPressedMouseKeyState.add(e.button);
-    console.log(e.button);
   };
   // GameInit func from wasm (see the C code for function)
   GameInit();
