@@ -37,14 +37,6 @@ void GameFrame(){
 }
 
 
-
-
-    // MyStruct t = (MyStruct){10, 20.5};
-    // addStruct(t);
-    // print("The universe breaks everyone");
-    // GameInit();
-    // GameFrame();
-
 #ifndef PLATFORM_WEB
 #include <stdio.h>
 int main(){
