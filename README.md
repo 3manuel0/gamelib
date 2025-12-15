@@ -1,6 +1,6 @@
 ## What's gamelib
 
-#### IT's a javascript library that has:
+### IT's a javascript library that has:
 
 `raylib.js`: for linking raylib functions in wasm to display in the html canvas.
 
@@ -8,13 +8,13 @@
 
 feel free to include any of them in your project.
 
-#### NOTE:
+### NOTE:
 
 not all the raylib function are available only the ones you see in `raylib.js`file.
 
 I'm still adding functions and fixing bugs from time to time.
 
-#### How To Use
+### How To Use:
 
 This library is mostly for learning puposes, if you don't want to use emscripten that does everything for you, but you want to compile things using clang then this library is for you.
 
