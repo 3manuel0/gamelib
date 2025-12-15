@@ -1,4 +1,4 @@
-// made a library to not always write/copy the same functions I always use in was
+// made a library to not always write/copy the same functions I always use in wasm
 window.wasmlib = {
   // thanks to Tsoding(Alexey Kutepov) for this proxy
   make_environment: (env) => {
@@ -13,6 +13,7 @@ window.wasmlib = {
       },
     });
   },
+
   // getting Cstring length in memory
   str_len: (mem, str_ptr) => {
     let len = 0;
@@ -22,6 +23,7 @@ window.wasmlib = {
     }
     return len;
   },
+
   // getting a Cstring from wasm memory
   get_str: (str_ptr) => {
     const buffer = wasm.instance.exports.memory.buffer;
@@ -30,7 +32,8 @@ window.wasmlib = {
     const str_bytes = new Uint8Array(buffer, str_ptr, len);
     return new TextDecoder().decode(str_bytes);
   },
-  // a "working" printf in wasm that works with c printf
+
+  // a "working non complet" printf in wasm that works with c printf
   printf: (str_ptr, args_ptrs) => {
     const buffer = wasm.instance.exports.memory.buffer;
     const str = get_str(str_ptr);
