@@ -231,19 +231,19 @@ WebAssembly.instantiateStreaming(fetch("game.wasm"), {
       desti_rect_ptr,
       origin_vec2_ptr,
       rotation_f_ptr,
-      tint_color_ptr
+      tint_color_ptr,
     ) => {
       const buffer = wasm.instance.exports.memory.buffer;
       const texture = new Uint32Array(buffer, texture_ptr, 5);
       const [sx, sy, sWidth, sHeight] = new Float32Array(
         buffer,
         source_rect_ptr,
-        4
+        4,
       );
       const [dx, dy, dWidth, dHeight] = new Float32Array(
         buffer,
         desti_rect_ptr,
-        4
+        4,
       );
       const [r, g, b, a] = new Uint8Array(buffer, tint_color_ptr, 4);
       const tint = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
@@ -256,7 +256,7 @@ WebAssembly.instantiateStreaming(fetch("game.wasm"), {
         dx,
         dy,
         dWidth,
-        dHeight
+        dHeight,
       );
     },
     LoadMusicStream: (ptr, filePath_ptr) => {
@@ -292,18 +292,15 @@ WebAssembly.instantiateStreaming(fetch("game.wasm"), {
       ctx.stroke();
     },
     GetMousePosition: (ret_ptr) => {
-      const canvasRect = ctx.canvas.getBoundingClientRect();
-      const x = currentMousePosition.x - canvasRect.left;
-      const y = currentMousePosition.y - canvasRect.top;
+      const rect = ctx.canvas.getBoundingClientRect();
+      const x =
+        (currentMousePosition.x - rect.left) * (canvas.width / rect.width);
+      const y =
+        (currentMousePosition.y - rect.top) * (canvas.height / rect.height);
+
       const buffer = wasm.instance.exports.memory.buffer;
-      new Float32Array(buffer, ret_ptr, 2).set([
-        (canvas.clientWidth / canvas.width) * x,
-        (canvas.clientHeight / canvas.height) * y,
-      ]);
-      // console.log(
-      //   (canvas.clientWidth / canvas.width) * x,
-      //   (canvas.clientHeight / canvas.height) * y
-      // );
+      new Float32Array(buffer, ret_ptr, 2).set([x, y]);
+      // console.log(x, y);
     },
     DrawFPS: (x, y) => {
       text = `${Math.floor(1 / dt)} FPS`;
@@ -321,21 +318,13 @@ WebAssembly.instantiateStreaming(fetch("game.wasm"), {
       return y1 + height1 >= y2 && x1 <= x2 + width2 && x1 + width1 >= x2;
     },
     CheckCollisionPointRec: (point_ptr, rect_ptr) => {
-      let [x_off, y_off] = [
-        canvas.clientWidth / canvas.width,
-        canvas.clientHeight / canvas.height,
-      ];
       const buffer = wasm.instance.exports.memory.buffer;
       const [pX, pY] = new Float32Array(buffer, point_ptr, 2);
       let [recX, recY, width, height] = new Float32Array(buffer, rect_ptr, 4);
-      recX *= x_off;
-      recY *= y_off;
-      // console.log(pX, pY, recX, recY, width, height);
-      // console.log(pX, pY, recX, recY, recX + width, recY + height);
+
       return (
         pY <= recY + height && pY >= recY && pX <= recX + width && pX >= recX
       );
-      // return true;
     },
     IsKeyDown: (key) => {
       // console.log(key);
