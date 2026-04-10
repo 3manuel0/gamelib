@@ -14,6 +14,12 @@ window.wasmlib = {
     });
   },
 
+  get_str_len: (str_ptr, len) => {
+    const buffer = wasm.instance.exports.memory.buffer;
+    const str_bytes = new Uint8Array(buffer, str_ptr, len);
+    return new TextDecoder().decode(str_bytes);
+  },
+
   // getting Cstring length in memory
   str_len: (mem, str_ptr) => {
     let len = 0;
@@ -38,57 +44,66 @@ window.wasmlib = {
     const buffer = wasm.instance.exports.memory.buffer;
     const str = get_str(str_ptr);
     let f_str = "";
-    let args = [];
-    let argsIndex = 0;
     for (let i = 0; i < str.length; i++) {
       if (str[i] === "%") {
         switch (str[i + 1]) {
           case "f":
-            let float = new Float32Array(buffer, args_ptrs + argsIndex, 1)[0];
-            args.push(float);
-            f_str += float;
-            argsIndex += 4;
+            f_str += new Float64Array(buffer, args_ptrs, 1)[0];
+            args_ptrs += 8;
+            i += 2;
+            break;
+          case "c":
+            f_str += String.fromCharCode(
+              new Int32Array(buffer, args_ptrs, 1)[0],
+            );
+            args_ptrs += 4;
             i += 2;
             break;
           case "d":
-            let int = new Int32Array(buffer, args_ptrs + argsIndex, 1)[0];
-            args.push(int);
-            f_str += int;
-            argsIndex += 4;
+            f_str += new Int32Array(buffer, args_ptrs, 1)[0];
+            args_ptrs += 4;
             i += 2;
             break;
           case "u":
-            let uint = new Uint32Array(buffer, args_ptrs + argsIndex, 1)[0];
-            args.push(uint);
+            let uint = new Uint32Array(buffer, args_ptrs, 1)[0];
             f_str += uint;
-            argsIndex += 4;
+            args_ptrs += 4;
             i += 2;
             break;
+          // fix this, it causes errors
+          case "g":
+            f_str += new Float64Array(buffer, args_ptrs, 1)[0].toPrecision(6);
+            args_ptrs += 8;
+            i += 2;
+            console.log(str, f_str);
+            break;
           case "s":
-            const str_ptr = new Uint32Array(
-              buffer,
-              args_ptrs + argsIndex,
-              1
-            )[0];
-            let str = get_str(str_ptr);
-            args.push(str);
-            f_str += str;
-            argsIndex += 4;
+            const str_ptr = new Uint32Array(buffer, args_ptrs, 1)[0];
+            f_str += get_str(str_ptr);
+            args_ptrs += 4;
             i += 2;
             break;
           case "i":
-            let iint = new Int32Array(buffer, args_ptrs + argsIndex, 1)[0];
-            args.push(iint);
-            f_str += iint;
-            argsIndex += 4;
+            f_str += new Int32Array(buffer, args_ptrs, 1)[0];
+            args_ptrs += 4;
             i += 2;
             break;
           case "p":
-            let ptr = args_ptrs + argsIndex;
-            args.push(ptr);
-            f_str += ptr;
-            argsIndex += 4;
+            let ptr = new Uint32Array(buffer, args_ptrs, 1)[0];
+            f_str += "0x" + ptr.toString(16);
+            args_ptrs += 4;
             i += 2;
+            break;
+          case "l":
+            if (str[i + 2] === "d") {
+              f_str += new BigInt64Array(buffer, args_ptrs, 1)[0];
+              args_ptrs += 8;
+              i += 3;
+            } else if (str[i + 2] === "f") {
+              f_str += new Float64Array(buffer, args_ptrs, 1)[0];
+              args_ptrs += 8;
+              i += 3;
+            }
             break;
         }
       }
